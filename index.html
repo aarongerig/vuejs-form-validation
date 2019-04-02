@@ -14,26 +14,54 @@
     <form @submit.prevent="submitForm" autocomplete="off">
         <div class="form-group">
             <label for="name">Name:</label>
-            <input id="name" type="text" v-model="$v.form.name.$model">
+            <input id="name" type="text" v-model="form.name" @blur="$v.form.name.$touch()" :class="{error: shouldAppendErrorClass($v.form.name), valid: shouldAppendValidClass($v.form.name)}">
             <p v-if="$v.form.name.$error" class="error-message">The name field is required</p>
         </div>
 
         <div class="form-group">
             <label for="age">Age:</label>
-            <input id="age" type="text" v-model.number="$v.form.age.$model">
+            <input id="age" type="text" v-model.number="form.age" @blur="$v.form.age.$touch()" :class="{error: shouldAppendErrorClass($v.form.age), valid: shouldAppendValidClass($v.form.age)}">
             <div v-if="$v.form.age.$error">
                 <p v-if="!$v.form.age.required" class="error-message">The age field is required</p>
                 <p v-else-if="!$v.form.age.integer" class="error-message">The age field must be an integer</p>
-                <p v-else-if="!$v.form.age.between" class="error-message">You should be at least 12 and younger than 120 to continue</p>
+                <p v-else-if="!$v.form.age.oldEnoughAndAlive" class="error-message">You should be at least 12 and younger than 120 to continue</p>
             </div>
         </div>
 
+        <div class="form-group">
+            <label for="newsletter">Subscribe to the newsletter:</label>
+            <input id="newsletter" type="checkbox" v-model="form.newsletter">
+        </div>
+
+        <div class="form-group github-username">
+            <label for="github-username">GitHub username:</label>
+            <input id="github-username" type="text" v-model.lazy="$v.form.githubUsername.$model" :class="{error: shouldAppendErrorClass($v.form.githubUsername), valid: shouldAppendValidClass($v.form.githubUsername)}">
+            <span v-show="$v.form.githubUsername.$pending" class="fa fa-spinner fa-spin"></span>
+            <p v-if="!$v.form.githubUsername.exists && $v.form.githubUsername.$error" class="error-message">There is no GitHub user with this username</p>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input id="email" type="text" v-model="form.email" @blur="$v.form.email.$touch()" :class="{error: shouldAppendErrorClass($v.form.email), valid: shouldAppendValidClass($v.form.email)}">
+            <div v-if="$v.form.age.$error">
+                <p v-if="!$v.form.email.email" class="error-message">Invalid email address</p>
+                <p v-if="!$v.form.email.required" class="error-message">Email is required so we can send you the newsletter</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="food">Pizza or Burger:</label>
+            <input id="food" type="text" v-model="form.food" @blur="$v.form.food.$touch()" :class="{error: shouldAppendErrorClass($v.form.food), valid: shouldAppendValidClass($v.form.food)}">
+            <p v-if="$v.form.food.$error && !$v.form.food.pizzaOrBurger" class="error-message">Sorry! We only serve pizzas and burgers</p>
+        </div>
+
         <div>
-            <button :disabled="$v.form.$invalid">Submit</button>
+            <button>Submit</button>
         </div>
     </form>
 </div>
 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
